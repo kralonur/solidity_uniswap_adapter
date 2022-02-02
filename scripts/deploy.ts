@@ -1,25 +1,18 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Token, Token__factory, UniswapAdapter, UniswapAdapter__factory } from "../typechain-types";
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  const [owner] = await ethers.getSigners();
+  const factoryRinkeby = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+  const routerRinkeby = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+  // const tokenFirst = await getTokenContract(owner, "TokenF", "TNF");
+  // const tokenSecond = await getTokenContract(owner, "TokenS", "TNS");
+  const adapter = await getAdapterContract(owner, factoryRinkeby, routerRinkeby);
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
-
-  await greeter.deployed();
-
-  console.log("Greeter deployed to:", greeter.address);
+  // console.log("tokenFirst deployed to:", tokenFirst.address);
+  // console.log("tokenSecond deployed to:", tokenSecond.address);
+  console.log("adapter deployed to:", adapter.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -28,3 +21,20 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+
+async function getTokenContract(owner: SignerWithAddress, name: string, symbol: string) {
+  const tokenFactory = new Token__factory(owner);
+  const tokenContract = await tokenFactory.deploy(name, symbol);
+  await tokenContract.deployed();
+
+  return tokenContract;
+}
+
+async function getAdapterContract(owner: SignerWithAddress, factoryContractAddress: string, routerContractAddress: string) {
+  const tokenFactory = new UniswapAdapter__factory(owner);
+  const tokenContract = await tokenFactory.deploy(factoryContractAddress, routerContractAddress);
+  await tokenContract.deployed();
+
+  return tokenContract;
+}
