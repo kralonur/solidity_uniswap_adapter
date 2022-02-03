@@ -32,7 +32,8 @@ contract UniswapAdapter {
      * @param tokenB The address of erc20 token
      */
     function createPair(address tokenA, address tokenB) external {
-        address result = factory.createPair(tokenA, tokenB);
+        address result = factory.getPair(tokenA, tokenB);
+        if (result == address(0)) result = factory.createPair(tokenA, tokenB);
 
         pairList[tokenA][tokenB] = result;
         pairList[tokenB][tokenA] = result;
@@ -114,5 +115,41 @@ contract UniswapAdapter {
             msg.sender,
             block.timestamp + 1000
         );
+    }
+
+    /**
+     * @dev Swaps the erc20 tokens
+     * @param tokenA The address of erc20 token
+     * @param tokenB The address of erc20 token
+     * @param amountOut The amount of token that function sender gonna get
+     * @param amountInMax The maximum amount of token that function sender willing to spend
+     */
+    function swapTokensForExactTokens(
+        address tokenA,
+        address tokenB,
+        uint256 amountOut,
+        uint256 amountInMax
+    ) external {
+        address[] memory newPath = new address[](2);
+        newPath[0] = tokenA;
+        newPath[1] = tokenB;
+
+        // Transfer tokens from function caller (function caller should approve first)
+        IERC20(tokenA).transferFrom(msg.sender, address(this), amountInMax);
+
+        IERC20(tokenA).approve(addressRouter, amountInMax);
+
+        uint256[] memory amounts = router.swapTokensForExactTokens(
+            amountOut,
+            amountInMax,
+            newPath,
+            msg.sender,
+            block.timestamp + 1000
+        );
+
+        uint256 extraToSendBack = amountInMax - amounts[0];
+
+        if (extraToSendBack > 0)
+            IERC20(tokenA).transfer(msg.sender, extraToSendBack);
     }
 }

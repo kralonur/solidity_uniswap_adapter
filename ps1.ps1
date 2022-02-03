@@ -4,4 +4,4 @@ npx hardhat verify --network rinkeby --constructor-args arguments-tokenfirst.js 
 
 npx hardhat verify --network rinkeby --constructor-args arguments-tokensecond.js 0xF1991E287352A0bB87d00fF8060701D6Afd3033c
 
-npx hardhat verify --network rinkeby --constructor-args arguments-adapter.js 0x78FDB107f77eC6F1829e817D18ef426A3Bad92ED
+npx hardhat verify --network rinkeby --constructor-args arguments-adapter.js 0xF5AbBA00b46796Af008A991FD6E276cB77B6948E

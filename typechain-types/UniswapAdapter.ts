@@ -24,6 +24,7 @@ export interface UniswapAdapterInterface extends utils.Interface {
     "createPair(address,address)": FunctionFragment;
     "getPair(address,address)": FunctionFragment;
     "swap(address,address,uint256,uint256)": FunctionFragment;
+    "swapTokensForExactTokens(address,address,uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -42,6 +43,10 @@ export interface UniswapAdapterInterface extends utils.Interface {
     functionFragment: "swap",
     values: [string, string, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "swapTokensForExactTokens",
+    values: [string, string, BigNumberish, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "addLiquidity",
@@ -50,6 +55,10 @@ export interface UniswapAdapterInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "createPair", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPair", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "swapTokensForExactTokens",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -110,6 +119,14 @@ export interface UniswapAdapter extends BaseContract {
       amountOutMin: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    swapTokensForExactTokens(
+      tokenA: string,
+      tokenB: string,
+      amountOut: BigNumberish,
+      amountInMax: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   addLiquidity(
@@ -141,6 +158,14 @@ export interface UniswapAdapter extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  swapTokensForExactTokens(
+    tokenA: string,
+    tokenB: string,
+    amountOut: BigNumberish,
+    amountInMax: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     addLiquidity(
       tokenA: string,
@@ -168,6 +193,14 @@ export interface UniswapAdapter extends BaseContract {
       tokenB: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    swapTokensForExactTokens(
+      tokenA: string,
+      tokenB: string,
+      amountOut: BigNumberish,
+      amountInMax: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -203,6 +236,14 @@ export interface UniswapAdapter extends BaseContract {
       amountOutMin: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    swapTokensForExactTokens(
+      tokenA: string,
+      tokenB: string,
+      amountOut: BigNumberish,
+      amountInMax: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -232,6 +273,14 @@ export interface UniswapAdapter extends BaseContract {
       tokenB: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapTokensForExactTokens(
+      tokenA: string,
+      tokenB: string,
+      amountOut: BigNumberish,
+      amountInMax: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
